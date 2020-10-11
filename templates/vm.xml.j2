@@ -18,9 +18,6 @@
   <os>
     <type arch='{{ libvirt_vm_arch }}'{% if machine is not none %} machine='{{ machine }}'{% endif %}>hvm</type>
     <bootmenu enable='no'/>
-    <boot dev='hd'/>
-    <boot dev='cdrom'/>
-    <boot dev='network'/>
     <bios useserial='yes'/>
   </os>
   <features>
@@ -61,6 +58,7 @@
       {% else %}
       <target dev='{{ volume.target }}' {% if volume.device | default(libvirt_volume_default_device) == 'cdrom' %}bus='sata'{% endif %}/>
       {% endif %}
+      <boot order="{{ loop.index }}"/>
     </disk>
 {% endfor %}
 {% for interface in interfaces %}
