@@ -50,13 +50,15 @@
           {% endfor %}
         </source>
         {% endif %} {# End volume.source.name check #}
+      {% elif volume.type is defined and volume.type == 'block' %}
+      <source dev='{{ volume.source }}' index='{{ loop.index }}'/>
       {% else %} {# End elif volume.type is defined #}
       <source pool='{{ volume.pool }}' volume='{{ volume.name }}'/>
       {% endif %}
       {% if volume.target is undefined %}
-      <target dev='vd{{ 'abcdefghijklmnopqrstuvwxyz'[loop.index - 1] }}' {% if volume.device | default(libvirt_volume_default_device) == 'cdrom' %}bus='sata'{% endif %}/>
+      <target dev='vd{{ 'abcdefghijklmnopqrstuvwxyz'[loop.index - 1] }}' {% if volume.bus is defined %}bus='{{volume.bu}}'{% endif %} {% if volume.device | default(libvirt_volume_default_device) == 'cdrom' %}bus='sata'{% endif %}/>
       {% else %}
-      <target dev='{{ volume.target }}' {% if volume.device | default(libvirt_volume_default_device) == 'cdrom' %}bus='sata'{% endif %}/>
+      <target dev='{{ volume.target }}' {% if volume.bus is defined %}bus='{{volume.bus}}'{% endif %}{% if volume.device | default(libvirt_volume_default_device) == 'cdrom' %}bus='sata'{% endif %}/>
       {% endif %}
       <boot order="{{ loop.index }}"/>
     </disk>
